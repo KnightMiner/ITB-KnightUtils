@@ -97,7 +97,7 @@ end
 --[[--
   Gets the target area for the current pawn's move skill.
   Will try the extended version, the regular, then default to vanilla logic
-  If you need to use the move parameter, you should call HasTargetFunction() first to verify its present
+  If you need to use the move parameter, you should call IsTargetAreaExt() first to verify its available
 
   @param point  Pawn Location
   @param move   Pawn move speed, if unset uses Pawn:GetMoveSpeed()
@@ -110,7 +110,7 @@ end
 --[[--
   Gets the move skill effect for the relevant pawn move skill
   Will try the extended version, the regular, then default to vanilla logic
-  If you need to use the ret parameter, you should call HasEffectFunction() first to verify its present
+  If you need to use the ret parameter, you should call IsSkillEffectExt() first to verify its available
 
   @param p1   Pawn location
   @param p2   Target location
