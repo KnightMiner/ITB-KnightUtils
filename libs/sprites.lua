@@ -98,7 +98,7 @@ end
 local PATHS = {
   mech    = "units/player",
   mission = "units/mission",
-  enemy   = "units/alien",
+  enemy   = "units/aliens",
   bot     = "units/snowbots"
 }
 
