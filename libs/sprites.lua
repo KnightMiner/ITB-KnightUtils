@@ -148,7 +148,7 @@ local function addUnitAnims(group, objects)
     end
 
     -- mechs have the extra hanger sprite
-    if group == "mech" then
+    if group == "mech" and not object.NoHanger then
       sprites.addSprite(path, name .. "_h")
     end
   end
