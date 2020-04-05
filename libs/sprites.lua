@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------------
 -- Sprite Loader Library
--- v0.1
+-- v1.0
 -- https://github.com/KnightMiner/ITB-KnightUtils/blob/master/libs/sprites.lua
 ------------------------------------------------------------------------------
 -- Contains helpers to load sprites and create animations
@@ -70,59 +70,124 @@ function sprites.addAnimation(path, name, settings)
 end
 
 --[[
-  Adds the specific animation for a mech
+  Adds the specific animation for a unit
 
+  @param path        Base folder for the unit
+  @param base        Base animation object
   @param name        Mech name
   @param key         Key in object containing animation data
   @param suffix      Suffix for this animation type
   @param fileSuffix  Suffix used in the filepath. If unset, defaults to suffix
 ]]
-local function addMechAnim(name, object, suffix, fileSuffix)
+local function addUnitAnim(path, base, name, object, suffix, fileSuffix)
   if object then
     -- default fileSuffix to the animation suffix
     fileSuffix = fileSuffix or suffix
 
     -- add the sprite to the resource list
     local filename = name .. fileSuffix
-    sprites.addSprite("units/player", filename)
+    sprites.addSprite(path, filename)
 
     -- add the mech animation to the animation list
-    object.Image = spritePath("units/player", filename)
-    ANIMS[name..suffix] = ANIMS.MechUnit:new(object);
+    object.Image = spritePath(path, filename)
+    ANIMS[name..suffix] = ANIMS[base]:new(object);
   end
 end
+
+--- Resource paths for each unit type
+local PATHS = {
+  mech    = "units/player",
+  mission = "units/mission",
+  enemy   = "units/alien",
+  bot     = "units/snowbots"
+}
+
+--- Base animation for each unit type
+local BASES = {
+  mech    = "MechUnit",
+  mission = "BaseUnit",
+  enemy   = "EnemyUnit",
+  bot     = "BaseUnit"
+}
+
+--- Bases for UI icons for each unit type
+local ICON_BASES = {
+  mech    = "MechIcon",
+  mission = "SingleImage"
+}
 
 --[[--
   Adds a list of resources to the game
 
-  @param sprites  varargs parameter of all mechs to add
+  @param group   varargs parameter of all mechs to add
+  @param objects Animation datas to add
 ]]
-function sprites.addMechs(...)
-  for _, object in pairs({...}) do
+local function addUnitAnims(group, objects)
+  local path = PATHS[group]
+  local base = BASES[group]
+  local iconBase = ICON_BASES[group]
+
+  -- loop through all passed parameters
+  for _, object in pairs(objects) do
     local name = object.Name
 
     -- these types are pretty uniform
-    addMechAnim(name, object.Default,         ""                     )
-    addMechAnim(name, object.Animated,        "a",        "_a"       )
-    addMechAnim(name, object.Broken,          "_broken"              )
-    addMechAnim(name, object.Death,           "d",        "_death"   )
-    addMechAnim(name, object.Submerged,       "w",        "_w"       )
-    addMechAnim(name, object.SubmergedBroken, "w_broken", "_w_broken")
+    addUnitAnim(path, base, name, object.Default,         ""                     )
+    addUnitAnim(path, base, name, object.Animated,        "a",        "_a"       )
+    addUnitAnim(path, base, name, object.Broken,          "_broken"              )
+    addUnitAnim(path, base, name, object.Death,           "d",        "_death"   )
+    addUnitAnim(path, base, name, object.Submerged,       "w",        "_w"       )
+    addUnitAnim(path, base, name, object.SubmergedBroken, "w_broken", "_w_broken")
 
-    -- icon actually uses 2 images, and uses a different object type
-    if object.Icon then
-      -- firstly, we have the extra hanger sprite
-      sprites.addSprite("units/player", name .. "_h")
+    -- emerge has a different base
+    addUnitAnim(path, "BaseEmerge", name, object.Emerge,  "e",        "_emerge"  )
 
-      -- add the regular no shadow sprite
-      local iconname = name .. "_ns"
-      sprites.addSprite("units/player", iconname)
+    -- if we have a base icon, try icon
+    if iconBase ~= nil then
+      addUnitAnim(path, iconBase, name, object.Icon, "_ns")
+    end
 
-      -- second, we use MechIcon instead of MechUnit
-      object.Icon.Image = spritePath("units/player", iconname)
-      ANIMS[iconname] = ANIMS.MechIcon:new(object.Icon);
+    -- mechs have the extra hanger sprite
+    if group == "mech" then
+      sprites.addSprite(path, name .. "_h")
     end
   end
+end
+
+--[[--
+  Adds a list of mech sprites and animations to the game
+
+  @param sprites  varargs parameter of all mechs to add
+]]
+function sprites.addMechs(...)
+  addUnitAnims("mech", {...})
+end
+
+--[[--
+  Adds a list of mission unit sprites and animations to the game
+
+  @param sprites  varargs parameter of all mission units to add
+]]
+function sprites.addMissionUnits(...)
+  addUnitAnims("mission", {...})
+end
+
+--[[--
+  Adds a list of enemy unit sprites and animations to the game
+
+  @param sprites  varargs parameter of all enemies to add
+]]
+function sprites.addEnemyUnits(...)
+  addUnitAnims("enemy", {...})
+end
+
+--[[--
+  Adds a list of bot unit sprites and animations to the game
+
+  @param sprites  varargs parameter of all bots to add
+]]
+function sprites.addBotUnits(...)
+  addUnitAnims("bot", {...})
 end
 
 return sprites
