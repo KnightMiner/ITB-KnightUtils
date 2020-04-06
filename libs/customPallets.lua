@@ -12,28 +12,17 @@ local VERSION = "0.2"
 -- if we have a global that is newer than or the same version as us, use that
 -- if our version is newer or its not yet loaded, load the library
 if CUSTOM_PALLETS == nil or not modApi:isVersion(VERSION, CUSTOM_PALLETS.version) then
-  local pallets = {
-    version = VERSION,
-    -- format: map ID -> {name, colors, index}
-    map = {},
-    -- format: index -> map ID
-    indexMap = {}
-  }
-
-  -- migrate maps from older version
-  if type(CUSTOM_PALLETS) == "table" then
-    -- copy color maps and index map over if set
-    if type(CUSTOM_PALLETS.colorMaps) == "table" then
-      pallets.colorMaps = CUSTOM_PALLETS.colorMaps
-    end
-    if type(CUSTOM_PALLETS.indexMap) == "table" then
-      pallets.indexMap = CUSTOM_PALLETS.indexMap
-    end
-  end
-
-  -- update the shared variable, shared among all copies of this library
-  -- if reloading, just outright replace the old copy, vanilla migration currently handles old lib migration
+  -- if we have an older version, update that table with the latest functions
+  -- ensures older copies of the library use the latest logic for everything
+  local pallets = CUSTOM_PALLETS or {}
   CUSTOM_PALLETS = pallets
+
+  -- ensure we have needed properties
+  pallets.version = VERSION
+  -- format: map ID -> {name, colors, index}
+  pallets.map = pallets.map or {}
+    -- format: index -> map ID
+  pallets.indexMap = pallets.indexMap or {}
 
   ----------------------
   -- Helper functions --
@@ -213,11 +202,6 @@ if CUSTOM_PALLETS == nil or not modApi:isVersion(VERSION, CUSTOM_PALLETS.version
     Migrates missing pallets and overrides the vanilla functions
   ]]
   function pallets.migrateHooks()
-    -- swap ourself for the global, to ensure we use the latest list
-    if pallet ~= CUSTOM_PALLETS then
-      pallets = CUSTOM_PALLETS
-    end
-
     -- if one of the two vanilla pallet functions is not ours, run migrations
     -- uses the global to ensure we migrate to the latest library version
     if GetColorCount ~= pallets.getCount or GetColorMap ~= pallets.getColorMap then
