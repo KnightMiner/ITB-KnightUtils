@@ -281,35 +281,42 @@ if CUSTOM_PALLETS == nil or not modApi:isVersion(VERSION, CUSTOM_PALLETS.version
 
     -- allow passing in multiple pallets at once, more efficient for animation reloading
     local datas = {...}
+    local added = #datas
     for _, data in ipairs(datas) do
       -- validations
       assert(type(data) == "table", "Pallet data must be a table")
       assert(type(data.ID) == "string", "Invalid pallet, missing string ID")
       assert(data.Name == nil or type(data.Name) == "string", "Name must be a string")
 
-      -- construct each of the pieces of the color
-      local colors = {}
-      for i, key in ipairs(PALLET_KEYS) do
-        if type(data[key]) ~= "table" then
-          error("Invalid pallet, missing key " .. key)
+      -- if two mods add a pallet with the same ID, ignore
+      -- allows mods to "share" a pallet
+      if pallets.map[data.ID] ~= nil then
+        added = added - 1
+      else
+        -- construct each of the pieces of the color
+        local colors = {}
+        for i, key in ipairs(PALLET_KEYS) do
+          if type(data[key]) ~= "table" then
+            error("Invalid pallet, missing key " .. key)
+          end
+          assert(#data[key] == 3, "Color must contain three integers")
+          colors[i] = GL_Color(unpack(data[key]))
         end
-        assert(#data[key] == 3, "Color must contain three integers")
-        colors[i] = GL_Color(unpack(data[key]))
-      end
 
-      -- create the pallet
-      local index = pallets.getCount() + 1
-      pallets.map[data.ID] = {
-        name = data.Name,
-        colors = colors,
-        index = index
-      }
-      pallets.indexMap[index] = data.ID
+        -- create the pallet
+        local index = pallets.getCount() + 1
+        pallets.map[data.ID] = {
+          name = data.Name,
+          colors = colors,
+          index = index
+        }
+        pallets.indexMap[index] = data.ID
+      end
     end
 
     -- reload animations to update the color count
     -- only need to reload once for all the pallets
-    updateAnimations(#datas)
+    updateAnimations(added)
   end
 end
 
