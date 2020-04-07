@@ -7,7 +7,7 @@
 ------------------------------------------------------------------------------------
 
 -- Current library version, so we can ensure the latest library version is used
-local VERSION = "0.2"
+local VERSION = "0.3"
 
 -- if we have a global that is newer than or the same version as us, use that
 -- if our version is newer or its not yet loaded, load the library
@@ -85,8 +85,7 @@ if CUSTOM_PALLETS == nil or not modApi:isVersion(VERSION, CUSTOM_PALLETS.version
   ]]
   local function getIfPresent(id, key, fallback)
     -- IDs loaded from vanilla or libraries besids FURL are numerically indexed
-    local idType = type(id)
-    assert(idType == "number" or idType == "string")
+    assert(type(id) == "string", "ID must be a string")
     assert(type(key) == "string", "Key must be a string")
     -- fetch the pallet if it exists
     local pallet = pallets.map[id]
@@ -197,6 +196,18 @@ if CUSTOM_PALLETS == nil or not modApi:isVersion(VERSION, CUSTOM_PALLETS.version
     "Detrius Tan",
     "Vek Purple"
   }
+  --- Internal names for each of the pallets, used for modders
+  local vanillaIDs = {
+    "RiftWalkers",
+    "RustingHulks",
+    "ZenithGuard",
+    "Blitzkrieg",
+    "SteelJudoka",
+    "FlameBehemoths",
+    "FrozenTitans",
+    "HazardousMechs",
+    "SecretSquad"
+  }
 
   --[[--
     Migrates missing pallets and overrides the vanilla functions
@@ -227,7 +238,7 @@ if CUSTOM_PALLETS == nil or not modApi:isVersion(VERSION, CUSTOM_PALLETS.version
           end
 
           -- use the name from FURL as the ID if present, or fallback to index (vanilla pallets)
-          local id = furlIDs[index] or index
+          local id = vanillaIDs[index] or furlIDs[index] or tostring(index)
           -- create the pallet data
           pallets.map[id] = {
             name = vanillaMapNames[i],
