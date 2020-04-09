@@ -149,7 +149,7 @@ if CUSTOM_PALETTES == nil or not modApi:isVersion(VERSION, CUSTOM_PALETTES.versi
   function palettes.getColorMap(index)
     assert(type(index) == "number", "Index must be a number")
     -- convert the index to an ID, then fetch the coorsponding map
-    local id = palettes.getMapID(index)
+    local id = palettes.indexMap[index]
     if id ~= nil then
       return getIfPresent(id, "colors")
     end
