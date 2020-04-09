@@ -4,7 +4,6 @@
 -- https://github.com/KnightMiner/ITB-KnightUtils/blob/master/libs/sprites.lua
 ------------------------------------------------------------------------------
 -- Contains helpers to load sprites and create animations
--- Currently in Beta, subject to change and a bit incomplete
 ------------------------------------------------------------------------------
 local sprites = {}
 local mod = mod_loader.mods[modApi.currentMod]
