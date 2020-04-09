@@ -448,8 +448,8 @@ if CUSTOM_PALETTES == nil or not modApi:isVersion(VERSION, CUSTOM_PALETTES.versi
   hangerHeader.height = 14
 
   -- palette UI dimensions
-  local PALETTE_WIDTH = 130 + 8
-  local PALETTE_HEIGHT = 70 + 8
+  local PALETTE_WIDTH = 134 + 8
+  local PALETTE_HEIGHT = 66 + 8
   local PALETTE_GAP = 16
   local CELL_WIDTH = PALETTE_WIDTH + PALETTE_GAP
   local CELL_HEIGHT = PALETTE_HEIGHT + PALETTE_GAP
@@ -467,7 +467,7 @@ if CUSTOM_PALETTES == nil or not modApi:isVersion(VERSION, CUSTOM_PALETTES.versi
     if surfaces == nil then
       -- uses two images to better show the palette
       surfaces = {
-        sdlext.getSurface({path = "img/units/player/mech_tank_ns.png", scale = 2}),
+        sdlext.getSurface({path = "img/units/player/mech_guard_ns.png", scale = 2}),
         sdlext.getSurface({path = "img/units/player/color_boxes.png", scale = 2})
       }
       -- rift walkers does not need to be recolored
