@@ -1,13 +1,13 @@
 -------------------------------------------------------------------------------------
 -- Custom Mech Palette Library
--- v0.5
+-- v0.6
 -- https://github.com/KnightMiner/ITB-KnightUtils/blob/master/libs/customPalettes.lua
 -------------------------------------------------------------------------------------
 -- Contains helpers to make custom mech palettes
 -------------------------------------------------------------------------------------
 
 -- Current library version, so we can ensure the latest library version is used
-local VERSION = "0.5"
+local VERSION = "0.6"
 
 -- if we have a global that is newer than or the same version as us, use that
 -- if our version is newer or its not yet loaded, load the library
@@ -388,6 +388,15 @@ if CUSTOM_PALETTES == nil or not modApi:isVersion(VERSION, CUSTOM_PALETTES.versi
     palettes.indexMap = newMap
     for index, id in pairs(newMap) do
       palettes.map[id].index = index
+    end
+    -- update FURL colors
+    if type(FURL_COLORS) == "table" then
+      for id, offset in pairs(FURL_COLORS) do
+        newOffset = migration[offset]
+        if newOffset ~= nil then
+          FURL_COLORS[id] = newOffset
+        end
+      end
     end
   end
 
