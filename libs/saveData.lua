@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 -- Save Data reading lbrary
--- v0.1
+-- v0.2
 -- https://github.com/KnightMiner/ITB-KnightUtils/blob/master/libs/saveData.lua
 -------------------------------------------------------------------------------
 -- Contains helpers to make it easier to read information from saveData.lua
@@ -16,7 +16,7 @@ local TOOLTIP_SIZE = Point(6,6)
   @param data  Data object to search
   @param key   Key to fetch
 ]]
-local function safeGet(data, ...)
+function saveData.safeGet(data, ...)
   for _, key in ipairs({...}) do
     if type(data) ~= "table" then
       return nil
@@ -36,7 +36,7 @@ local function getRegionTable(...)
     return {}
   end
   -- get map data from the region data
-  local map = safeGet(GetCurrentRegion(), ...)
+  local map = saveData.safeGet(GetCurrentRegion(), ...)
   if type(map) == "table" then
     return map
   end
@@ -97,7 +97,7 @@ function saveData.getPawnKey(id, ...)
   id = getID(id)
   for key, pawn in pairs(getPawnData()) do
     if key:sub(1, 4) == 'pawn' and type(pawn) == "table" and pawn.id == id then
-      return safeGet(pawn, ...)
+      return saveData.safeGet(pawn, ...)
     end
   end
   return nil
@@ -114,7 +114,7 @@ function saveData.getAllPawns(...)
   local data = {}
   for key, pawn in pairs(getPawnData()) do
     if key:sub(1, 4) == 'pawn' then
-      local value = safeGet(pawn, ...)
+      local value = saveData.safeGet(pawn, ...)
       if value ~= nil and pawn.id ~= nil then
         data[pawn.id] = value
       end
@@ -147,7 +147,7 @@ function saveData.getSpaceKey(space, ...)
   local data = {}
   for _, data in ipairs(getSpaceData()) do
     if type(data) == "table" and data.loc == space then
-      return safeGet(data, ...)
+      return saveData.safeGet(data, ...)
     end
   end
   return nil
@@ -163,7 +163,7 @@ end
 function saveData.getAllSpaces(...)
   local all = {}
   for _, data in ipairs(getSpaceData()) do
-    local value = safeGet(data, ...)
+    local value = saveData.safeGet(data, ...)
     if value ~= nil and data.loc ~= nil then
       all[data.loc] = value
     end
