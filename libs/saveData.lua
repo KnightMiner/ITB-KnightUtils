@@ -28,14 +28,14 @@ function saveData.safeGet(data, ...)
 end
 
 --[[--
-	Converts a point to an index, given Board width
+  Converts a point to an index, given Board width
   @param point  Point to convert
   @param width  Board width, if unset uses `Board`
   @return  Index of the point for the given board width
 ]]
 function saveData.pointIndex(point, width)
-	if not width then width = Board:GetSize().x end
-	return point.y * width + point.x
+  if not width then width = Board:GetSize().x end
+  return point.y * width + point.x
 end
 
 --[[--
