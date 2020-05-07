@@ -14,7 +14,8 @@ local TOOLTIP_SIZE = Point(6,6)
   Safely gets a nested key within a table
 
   @param data  Data object to search
-  @param key   Key to fetch
+  @param ...   Key(s) to fetch
+  @return Data at key, or nil if any part of the path does not exist
 ]]
 function saveData.safeGet(data, ...)
   for _, key in ipairs({...}) do
