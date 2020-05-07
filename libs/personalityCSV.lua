@@ -80,6 +80,9 @@ local personality = {}
                 In vanilla, pilots.csv starts at 8, missions.csv at 3
 ]]
 function personality.load(path, start)
+  assert(type(path) == "string", "Path must be a string")
+  assert(type(start) == "number" and start % 1 == 0 and start > 2, "Invalid start, must be an integer number 2 or more")
+
   -- start the path in the mod folder, appending .csv
   local localPath = resourcePath .. path .. ".csv"
   local fullPath = GetWorkingDir() .. localPath
