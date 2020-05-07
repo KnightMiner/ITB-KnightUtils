@@ -164,18 +164,15 @@ function saveData.getSpaceKey(space, ...)
   return nil
 end
 
---- Metatable for a space map, allowing you to call it with a point
+--- Metatable for a space map, allowing you to use points as keys
 --- Used since points are not allowed directly as keys for a map
 local SPACE_MAP = {
-  --- Calling the table directly gets the value for a point
-  __call = function(table, point)
-    if type(point) == "number" then
-      return table[point]
-    end
+  --- Lets you pretend points work as table keys
+  __index = function(table, point)
     if type(point) == "userdata" then
-      return table[saveData.pointIndex(point)]
+      point = saveData.pointIndex(point)
     end
-    return nil
+    return rawget(table, point)
   end
 }
 
