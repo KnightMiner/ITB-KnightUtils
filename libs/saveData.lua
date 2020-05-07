@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 -- Save Data reading lbrary
--- v0.2
+-- v0.3
 -- https://github.com/KnightMiner/ITB-KnightUtils/blob/master/libs/saveData.lua
 -------------------------------------------------------------------------------
 -- Contains helpers to make it easier to read information from saveData.lua
@@ -27,6 +27,24 @@ function saveData.safeGet(data, ...)
   return data
 end
 
+--[[--
+	Converts a point to an index, given Board width
+  @param point  Point to convert
+  @param width  Board width, if unset uses `Board`
+  @return  Index of the point for the given board width
+]]
+function saveData.pointIndex(point, width)
+	if not width then width = Board:GetSize().x end
+	return point.y * width + point.x
+end
+
+--[[--
+  Checks if save data is unavailable in the current context
+  @return true if we are in a tooltip or the mech tester
+]]
+function saveData.dataUnavailable()
+  return IsTestMechScenario() or Board:GetSize() == TOOLTIP_SIZE
+end
 
 --[[--
   Gets a table from region data
@@ -64,14 +82,6 @@ local function getID(value)
     end
   end
   error("Invalid ID, must be a class with GetId or a number")
-end
-
---[[--
-  Checks if save data is unavailable in the current context
-  @return true if we are in a tooltip or the mech tester
-]]
-function saveData.dataUnavailable()
-  return IsTestMechScenario() or Board:GetSize() == TOOLTIP_SIZE
 end
 
 -----------
@@ -154,19 +164,34 @@ function saveData.getSpaceKey(space, ...)
   return nil
 end
 
+--- Metatable for a space map, allowing you to call it with a point
+--- Used since points are not allowed directly as keys for a map
+local SPACE_MAP = {
+  --- Calling the table directly gets the value for a point
+  __call = function(table, point)
+    if type(point) == "number" then
+      return table[point]
+    end
+    if type(point) == "userdata" then
+      return table[saveData.pointIndex(point)]
+    end
+    return nil
+  end
+}
+
 --[[--
   Gets a map of locations to space data for all spaces
   Store the result as a local variable if you intend to use this data multiple times.
 
   @param ...  Key(s) from space data to fetch
-  @return Map of space to data
+  @return Map of space to data, can be called with a point to get data
 ]]
 function saveData.getAllSpaces(...)
-  local all = {}
+  local all = setmetatable({}, SPACE_MAP)
   for _, data in ipairs(getSpaceData()) do
     local value = saveData.safeGet(data, ...)
     if value ~= nil and data.loc ~= nil then
-      all[data.loc] = value
+      all[saveData.pointIndex(data.loc)] = value
     end
   end
   return all
