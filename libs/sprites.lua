@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------------
 -- Sprite Loader Library
--- v1.0
+-- v1.1
 -- https://github.com/KnightMiner/ITB-KnightUtils/blob/master/libs/sprites.lua
 ------------------------------------------------------------------------------
 -- Contains helpers to load sprites and create animations
@@ -66,6 +66,17 @@ function sprites.addAnimation(path, name, settings)
 
   -- create the animation
   ANIMS[name] = ANIMS[base]:new(settings)
+end
+
+--[[--
+  Adds a sprite as an icon to use for weapon previews
+    @param path      Base sprite path
+    @param name      Sprite filename
+    @param location  Location for sprite display
+]]
+function sprites.addIcon(path, name, location)
+  sprites.addSprite(path, name)
+  Location[spritePath(path, name)] = location
 end
 
 --[[
