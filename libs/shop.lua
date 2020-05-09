@@ -1,13 +1,13 @@
 ---------------------------------------------------------------------------
 -- Weapon Shop Library
--- v0.3
+-- v0.4
 -- https://github.com/KnightMiner/ITB-KnightUtils/blob/master/libs/shop.lua
 ---------------------------------------------------------------------------
 -- Contains helpers to add weapons to the shop and to create a shop UI
 ---------------------------------------------------------------------------
 
 -- Current library version, so we can ensure the latest library version is used
-local VERSION = "0.3"
+local VERSION = "0.4"
 
 -- if we have a global that is newer than or the same version as us, use that
 -- if our version is newer or its not yet loaded, load the library
@@ -215,8 +215,10 @@ if WEAPON_SHOP == nil or not modApi:isVersion(VERSION, WEAPON_SHOP.version) then
     local presets = {}
     sdlext.config("modcontent.lua", function(config)
       oldConfig = config.shopWeaponsEnabled or {}
-      for key in pairs(config.shopWeaponPresets) do
-        table.insert(presets, key)
+      if config.shopWeaponPresets ~= nil then
+        for key in pairs(config.shopWeaponPresets) do
+          table.insert(presets, key)
+        end
       end
     end)
     -- if not up to Z, support new presets
