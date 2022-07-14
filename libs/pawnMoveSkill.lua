@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------------------
 -- Pawn Move Skill Library
--- v1.0
+-- v1.1
 -- https://github.com/KnightMiner/ITB-KnightUtils/blob/master/libs/pawnMoveSkill.lua
 ------------------------------------------------------------------------------------
 -- Contains helpers to make pilot skills compatible with pawn move skills
@@ -79,7 +79,7 @@ end
   Will try the extended version, the move skill override, then default to vanilla logic
 ]]
 local function callVanillaFunction(name, ...)
-  local moveSkill = _G[Pawn:GetType()].MoveSkill
+  local moveSkill = pawnMove.GetMoveSkill()
   local extName = name .. "Ext"
   -- GetTargetArea and GetSkillEffect have code injected into them by weaponPreview
   -- the extended version does not have those injections and is compatible with the parameters
@@ -121,6 +121,19 @@ function pawnMove.GetSkillEffect(p1, p2, ret)
   return callVanillaFunction("GetSkillEffect", p1, p2, ret)
 end
 
+--[[
+  Gets the move skill from the current pawn
+
+  @return  Pawn's move skill, or nil if missing
+]]
+function pawnMove.GetMoveSkill()
+  local moveSkill = _G[Pawn:GetType()].MoveSkill
+	if type(moveSkill) == 'string' then
+		moveSkill = _G[moveSkill]
+	end
+  return moveSkill
+end
+
 --[[--
   Checks if the pawns overrides the given move function or has the given custom function
 
@@ -128,7 +141,7 @@ end
   @return true if the function exists and is overridden or if no move skill is set
 ]]
 function pawnMove.HasFunction(name)
-  local moveSkill = _G[Pawn:GetType()].MoveSkill
+  local moveSkill = pawnMove.GetMoveSkill()
   return moveSkill ~= nil and moveSkill[name] ~= nil
 end
 
@@ -178,7 +191,7 @@ end
 ]]
 function pawnMove.CallFunction(name, default, ...)
   -- get the pawns move skill or the default logic
-  local moveSkill = _G[Pawn:GetType()].MoveSkill
+  local moveSkill = pawnMove.GetMoveSkill()
 
   -- move skill overrides this? use their logic
   if moveSkill ~= nil and moveSkill[name] ~= nil then
