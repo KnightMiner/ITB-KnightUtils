@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------------------
 -- Pawn Move Skill Library
--- v1.2
+-- v1.3
 -- https://github.com/KnightMiner/ITB-KnightUtils/blob/master/libs/pawnMoveSkill.lua
 ------------------------------------------------------------------------------------
 -- Contains helpers to make pilot skills compatible with pawn move skills
@@ -204,7 +204,7 @@ end
                   If not a function, value to return if the named function is missing
 ]]
 function pawnMove.CallFunction(name, default, ...)
-  return pawnMove.CallSkillFunction(pawnMove.GetMoveSkill(), name, ...)
+  return pawnMove.CallSkillFunction(pawnMove.GetMoveSkill(), name, default, ...)
 end
 
 
@@ -265,7 +265,7 @@ function pawnMove.GetSkillEffect(p1, p2, ret, moveSkill)
     end
   end
   -- fallback if they lack the function or lack the custom move skill entirely
-  return pawnMove.GetDefaultSkillEffect(point, move)
+  return pawnMove.GetDefaultSkillEffect(p1, p2, ret)
 end
 
 
